@@ -7,6 +7,14 @@ public class BinarySearchTree<E extends Comparable<E>> {
 
     }
 
+    public BinarySearchTree(Node<E> root) {
+        this.root = root;
+    }
+
+    public BinarySearchTree(E obj) {
+        this.root = new Node<>(obj);
+    }
+
     public void add(E obj) {
         if(root == null) {
             root = new Node<>(obj);
@@ -14,6 +22,76 @@ public class BinarySearchTree<E extends Comparable<E>> {
         }
         else if(root.insert(obj)) 
             size++;
+    }
+
+    public boolean contains(E obj) {
+        return root == null? false : root.contains(obj);
+    }
+
+    public String preorder() {
+        return preorder(root);
+    }
+
+    public String preorder(Node node) {
+        if(node != null) {
+            String s = "";
+            s += node.toString();
+            String temp = preorder(node.getLeft());
+            if(temp.length() != 0)
+                s += "\t" + temp;
+            temp = preorder(node.getRight());
+            if(temp.length() != 0)
+                s +=  "\t" + temp;
+            return s;
+        } else {
+            return "";
+        }
+    }
+
+    public String inorder() {
+        return inorder(root);
+    }
+
+    public String inorder(Node node) {
+        if(node != null) {
+            String s = "";
+            String temp = inorder(node.getLeft());
+            if(temp.length() != 0) {
+                s += temp;
+                s += "\t" + node.toString();
+            } else {
+                s += node.toString();
+            }
+            temp = inorder(node.getRight());
+            if(temp.length() != 0)
+                s +=  "\t" + temp;
+            return s;
+        } else {
+            return "";
+        }
+    }
+
+    public String postorder() {
+        return postorder(root);
+    }
+
+    public String postorder(Node node) {
+        if(node != null) {
+            String s = "";
+            String temp = postorder(node.getLeft());
+            if(temp.length() != 0)
+                s += temp;
+            temp = postorder(node.getRight());
+            if(temp.length() != 0)
+                s +=  (s.length() == 0? "" : "\t") + temp;
+            if(s.length() == 0) 
+                s += node.toString();
+            else
+                s += "\t" + node.toString();
+            return s;
+        } else {
+            return "";
+        }
     }
 
     public int size() {
@@ -48,6 +126,33 @@ public class BinarySearchTree<E extends Comparable<E>> {
                     return left.insert(obj);
             }
             return false;
+        }
+
+        public boolean contains(E obj) {
+            return search(obj) != null;
+        }
+
+        public Node<E> search(E obj) {
+            int c = obj.compareTo(value);
+            if(c > 0)
+                return right == null? null : right.search(obj);
+            else if(c < 0)
+                return left == null? null : left.search(obj);
+            return this;
+        }
+
+        public void remove(E obj) {
+            // Node<E> node = search(obj)
+            // if(node == null) return;
+            // int count = node.childCount();
+            // switch()
+        }
+
+        public int childCount() {
+            int i = 0;
+            if(left != null) i += 1;
+            if(right != null) i += 1;
+            return i;
         }
 
         public E getValue() {
