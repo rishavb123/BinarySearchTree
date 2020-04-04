@@ -1,3 +1,6 @@
+import java.util.List;
+import java.util.ArrayList;
+
 public class BinarySearchTree<E extends Comparable<E>> {
 
     private int size;
@@ -24,15 +27,103 @@ public class BinarySearchTree<E extends Comparable<E>> {
             size++;
     }
 
+    public void remove(E obj) {
+        root = remove(root, obj, true);
+    }
+
+    public Node<E> remove(Node<E> node, E obj, boolean removalFlag) {
+        if(node == null) return null;
+        int c = node.getValue().compareTo(obj);
+        if(c > 0) 
+            node.setLeft(remove(node.getLeft(), obj, removalFlag));
+        else if(c < 0)
+            node.setRight(remove(node.getRight(), obj, removalFlag));
+        else {
+            if(removalFlag)
+                size--;
+            switch(node.childCount()) {
+                case 0:
+                case 1:
+                    return node.getFirstChild();
+                case 2:
+                    node.setValue(subtree(node.getRight()).minValue());
+                    node.setRight(remove(node.getRight(), node.getValue(), false));
+            }
+        }
+        return node;
+    }
+
+    public E minValue() {
+        Node<E> node;
+        for(node = root; node.getLeft() != null; node = node.getLeft());
+        return node.getValue();
+    }
+
+    public E maxValue() {
+        Node<E> node;
+        for(node = root; node.getRight() != null; node = node.getRight());
+        return node.getValue();
+    }
+
     public boolean contains(E obj) {
         return root == null? false : root.contains(obj);
+    }
+
+    public BinarySearchTree<E> subtree(E obj) {
+        return subtree(root.search(obj));
+    }
+
+    public BinarySearchTree<E> subtree(Node<E> node) {
+        return new BinarySearchTree<>(node);
+    }
+
+    public List<E> preorderList() {
+        ArrayList<E> list = new ArrayList<>();
+        preorderList(root, list);
+        return list;
+    }
+
+    public void preorderList(Node<E> node, List<E> list) {
+        if(node != null) {
+            list.add(node.getValue());
+            preorderList(node.getLeft(), list);
+            preorderList(node.getRight(), list);
+        }
+    }
+
+    public List<E> inorderList() {
+        ArrayList<E> list = new ArrayList<>();
+        inorderList(root, list);
+        return list;
+    }
+
+    public void inorderList(Node<E> node, List<E> list) {
+        if(node != null) {
+            inorderList(node.getLeft(), list);
+            list.add(node.getValue());
+            inorderList(node.getRight(), list);
+        }
+    }
+
+    public List<E> postorderList() {
+        ArrayList<E> list = new ArrayList<>();
+        postorderList(root, list);
+        return list;
+    }
+
+    public void postorderList(Node<E> node, List<E> list) {
+        if(node != null) {
+            postorderList(node.getLeft(), list);
+            postorderList(node.getRight(), list);
+            list.add(node.getValue());
+        }
     }
 
     public String preorder() {
         return preorder(root);
     }
 
-    public String preorder(Node node) {
+    public String preorder(Node<E> node) {
         if(node != null) {
             String s = "";
             s += node.toString();
@@ -52,7 +143,7 @@ public class BinarySearchTree<E extends Comparable<E>> {
         return inorder(root);
     }
 
-    public String inorder(Node node) {
+    public String inorder(Node<E> node) {
         if(node != null) {
             String s = "";
             String temp = inorder(node.getLeft());
@@ -75,7 +166,7 @@ public class BinarySearchTree<E extends Comparable<E>> {
         return postorder(root);
     }
 
-    public String postorder(Node node) {
+    public String postorder(Node<E> node) {
         if(node != null) {
             String s = "";
             String temp = postorder(node.getLeft());
@@ -141,11 +232,17 @@ public class BinarySearchTree<E extends Comparable<E>> {
             return this;
         }
 
-        public void remove(E obj) {
-            // Node<E> node = search(obj)
-            // if(node == null) return;
-            // int count = node.childCount();
-            // switch()
+        public void remove(Node<E> node) {
+            replace(node, null);
+        }
+
+        public void replace(Node<E> node, Node<E> node2) {
+            if(left == node) left = node2;
+            if(right == node) right = node2;
+        }
+
+        public Node<E> getFirstChild() {
+            return left == null? right: left;
         }
 
         public int childCount() {
