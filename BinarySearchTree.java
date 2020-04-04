@@ -189,6 +189,10 @@ public class BinarySearchTree<E extends Comparable<E>> {
         return size;
     }
 
+    public String toString() {
+        return preorder() + "\n" + inorder() + "\n" + postorder() + "\n";
+    }
+
     public static class Node<E extends Comparable<E>> {
         
         private E value;
